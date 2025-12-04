@@ -1,7 +1,7 @@
 import { AnalyzeQueryDto, AnalyzeResponseDto } from "@/modules/exchange/dto/analyze.dto";
 import { ConfigurationType, EnvironmentVariable } from "@/shared/configuration/configuration.schema";
 import { tryCatch } from "@/shared/utils/try-catch";
-import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { MainClient } from "binance";
 import { Decimal } from "decimal.js";
@@ -15,6 +15,7 @@ interface IExchangeService {
 @Injectable()
 export class ExchangeService implements IExchangeService {
   client: MainClient;
+  private readonly logger = new Logger(ExchangeService.name);
 
   constructor(private readonly configService: ConfigService<ConfigurationType, true>) {
     this.client = new MainClient({
@@ -25,11 +26,17 @@ export class ExchangeService implements IExchangeService {
 
   async analyze(options: AnalyzeQueryDto): Promise<AnalyzeResponseDto> {
     const klineResponse = await tryCatch(async () => await this.client.getKlines(options));
-    // TODO: Handle different API errors
-    if (klineResponse.error) throw new InternalServerErrorException();
+    if (klineResponse.error) {
+      this.logger.error(klineResponse.error);
+      // TODO: Handle different API errors
+      throw new InternalServerErrorException();
+    }
     const klines = klineResponse.data;
 
-    if (!klines.length) throw new BadRequestException(INVALID_TIMEFRAME_ERROR_MESSAGE);
+    if (!klines.length) {
+      this.logger.error(INVALID_TIMEFRAME_ERROR_MESSAGE, options);
+      throw new BadRequestException(INVALID_TIMEFRAME_ERROR_MESSAGE);
+    }
 
     const openPrice = new Decimal(klines[0][1]);
     const closePrice = new Decimal(klines[klines.length - 1][4]);
