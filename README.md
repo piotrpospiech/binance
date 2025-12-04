@@ -22,3 +22,7 @@ pnpm typecheck
 pnpm format
 pnpm check # run all scripts above at once
 ```
+
+### API documentation
+
+Swagger documentation is available under the `http://localhost:3001/reference` URL on the development environment.
