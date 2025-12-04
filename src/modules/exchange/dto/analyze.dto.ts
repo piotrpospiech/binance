@@ -1,4 +1,5 @@
 import { numericString } from "@/shared/utils/data-types";
+import { ApiProperty } from "@nestjs/swagger";
 import { createZodDto } from "nestjs-zod";
 import z from "zod";
 
@@ -36,8 +37,23 @@ export const analyzeResponseSchema = z.object({
   closePrice: numericString(),
   openPrice: numericString(),
   priceDifference: numericString(),
-  ath: numericString(),
-  atl: numericString(),
+  highPrice: numericString(),
+  lowPrice: numericString(),
 });
 
-export class AnalyzeResponseDto extends createZodDto(analyzeResponseSchema) {}
+export class AnalyzeResponseDto extends createZodDto(analyzeResponseSchema) {
+  @ApiProperty({ example: "93154.21" })
+  closePrice: string;
+
+  @ApiProperty({ example: "93943.24" })
+  openPrice: string;
+
+  @ApiProperty({ example: "789.03" })
+  priceDifference: string;
+
+  @ApiProperty({ example: "94080" })
+  highPrice: string;
+
+  @ApiProperty({ example: "92782.48" })
+  lowPrice: string;
+}

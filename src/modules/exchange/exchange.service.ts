@@ -25,7 +25,7 @@ export class ExchangeService implements IExchangeService {
   async analyze(options: AnalyzeQueryDto): Promise<AnalyzeResponseDto> {
     const klines = await this.client.getKlines(options);
 
-    if (klines.length) throw new BadRequestException(INVALID_TIMEFRAME_ERROR_MESSAGE);
+    if (!klines.length) throw new BadRequestException(INVALID_TIMEFRAME_ERROR_MESSAGE);
 
     const openPrice = new Decimal(klines[0][1]);
     const closePrice = new Decimal(klines[klines.length - 1][4]);
@@ -33,18 +33,18 @@ export class ExchangeService implements IExchangeService {
 
     const allTimePrices = klines.reduce(
       (acc, kline) => ({
-        ath: Decimal.max(new Decimal(kline[2]), acc.ath),
-        atl: Decimal.min(new Decimal(kline[3]), acc.ath),
+        highPrice: Decimal.max(new Decimal(kline[2]), acc.highPrice),
+        lowPrice: Decimal.min(new Decimal(kline[3]), acc.highPrice),
       }),
-      { ath: new Decimal(0), atl: new Decimal(0) },
+      { highPrice: new Decimal(0), lowPrice: new Decimal(0) },
     );
 
     return {
       openPrice: openPrice.toString(),
       closePrice: closePrice.toString(),
       priceDifference: priceDifference.toString(),
-      ath: allTimePrices.ath.toString(),
-      atl: allTimePrices.atl.toString(),
+      highPrice: allTimePrices.highPrice.toString(),
+      lowPrice: allTimePrices.lowPrice.toString(),
     };
   }
 }
