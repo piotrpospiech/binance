@@ -24,9 +24,9 @@ enum Interval {
 export const analyzeQuerySchema = z.object({
   symbol: z.string(),
   interval: z.enum(Interval),
-  startTime: z.number().optional(),
-  endTime: z.number().optional(),
-  limit: z.number().optional(),
+  startTime: z.coerce.number().optional(),
+  endTime: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
   // timeZone? STRING	NO	Default: 0 (UTC)
 });
 
