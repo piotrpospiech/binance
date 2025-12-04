@@ -1,9 +1,11 @@
 import { AnalyzeQueryDto, AnalyzeResponseDto } from "@/modules/exchange/dto/analyze.dto";
 import { ConfigurationType, EnvironmentVariable } from "@/shared/configuration/configuration.schema";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { MainClient } from "binance";
 import { Decimal } from "decimal.js";
+
+const INVALID_TIMEFRAME_ERROR_MESSAGE = "There is no data in the given timeframe";
 
 interface IExchangeService {
   analyze(options: AnalyzeQueryDto): Promise<AnalyzeResponseDto>;
@@ -22,6 +24,8 @@ export class ExchangeService implements IExchangeService {
 
   async analyze(options: AnalyzeQueryDto): Promise<AnalyzeResponseDto> {
     const klines = await this.client.getKlines(options);
+
+    if (klines.length) throw new BadRequestException(INVALID_TIMEFRAME_ERROR_MESSAGE);
 
     const openPrice = new Decimal(klines[0][1]);
     const closePrice = new Decimal(klines[klines.length - 1][4]);
