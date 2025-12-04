@@ -4,7 +4,7 @@ import { ExchangeService } from "@/modules/exchange/exchange.service";
 import { Controller, Get, Query } from "@nestjs/common";
 
 interface IExchangeController {
-  analyze(query: AnalyzeQueryDto): AnalyzeResponseDto[];
+  analyze(query: AnalyzeQueryDto): Promise<AnalyzeResponseDto>;
 }
 
 @Controller(ExchangeRoutes.BASE)
@@ -12,7 +12,7 @@ export class ExchangeController implements IExchangeController {
   constructor(private readonly exchangeService: ExchangeService) {}
 
   @Get(ExchangeRoutes.ANALYZE)
-  analyze(@Query() query: AnalyzeQueryDto): AnalyzeResponseDto[] {
-    return this.exchangeService.analyze(query);
+  async analyze(@Query() query: AnalyzeQueryDto): Promise<AnalyzeResponseDto> {
+    return await this.exchangeService.analyze(query);
   }
 }
