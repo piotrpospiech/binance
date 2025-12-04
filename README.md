@@ -6,6 +6,8 @@
 pnpm install
 ```
 
+Create `.env` file based on the `.env.example` file with environment variables.
+
 ### Start development
 
 ```sh
