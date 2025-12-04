@@ -1,3 +1,4 @@
+import { numericString } from "@/shared/utils/data-types";
 import { createZodDto } from "nestjs-zod";
 import z from "zod";
 
@@ -32,11 +33,11 @@ export const analyzeQuerySchema = z.object({
 export class AnalyzeQueryDto extends createZodDto(analyzeQuerySchema) {}
 
 export const analyzeResponseSchema = z.object({
-  closePrice: z.string(),
-  openPrice: z.string(),
-  priceDifference: z.string(),
-  ath: z.string(),
-  atl: z.string(),
+  closePrice: numericString(),
+  openPrice: numericString(),
+  priceDifference: numericString(),
+  ath: numericString(),
+  atl: numericString(),
 });
 
 export class AnalyzeResponseDto extends createZodDto(analyzeResponseSchema) {}
