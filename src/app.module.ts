@@ -1,7 +1,8 @@
+import { ExchangeModule } from "@/modules/exchange/exchange.module";
 import { Module } from "@nestjs/common";
 
 @Module({
-  imports: [],
+  imports: [ExchangeModule],
   controllers: [],
   providers: [],
 })
